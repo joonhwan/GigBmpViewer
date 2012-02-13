@@ -6,7 +6,7 @@
 class QAction;
 class QGigImageViewer;
 class QGigImageGraphicsView;
-class QGigImageGraphicsItem;
+class QGigImageGraphicsScene;
 
 class MainWindow : public QMainWindow
 {
@@ -25,7 +25,7 @@ protected:
     void createMenus();
 
 	QGigImageGraphicsView* m_view;
-	QGigImageGraphicsItem* m_imageItem;
+	QGigImageGraphicsScene* m_scene;
 
 	QAction *m_openAction;
 	QAction *m_exitAction;

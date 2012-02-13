@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "qgigimageviewer.h"
 #include "gigbmpimage.h"
-#include "qgigimagegraphicsitem.h"
 #include "qgigimagegraphicsview.h"
+#include "qgigimagegraphicsscene.h"
 
 #include <QAction>
 #include <QFileDialog>
@@ -15,12 +15,11 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 	, m_view(0)
-	, m_imageItem(0)
+	, m_scene(0)
 {
-	QGraphicsScene* scene = new QGraphicsScene;
-
+	m_scene = new QGigImageGraphicsScene;
 	m_view = new QGigImageGraphicsView;
-	m_view->setScene(scene);
+	m_view->setScene(m_scene);
 	// view->scale(4.0, 4.0);
 
 	setCentralWidget(m_view);
@@ -40,16 +39,7 @@ void MainWindow::open(void)
 													"", // current dir
 													tr("BMP File(*.bmp)"));
 	if(!filePath.isEmpty()) {
-		QGraphicsScene* scene = m_view->scene();
-		if(m_imageItem) {
-			scene->removeItem(m_imageItem);
-			delete m_imageItem;
-			m_imageItem = 0;
-		}
-		GigBmpImage* image = new GigBmpImage;
-		if(image->Open(filePath)) {
-			m_imageItem = new QGigImageGraphicsItem(image);
-			scene->addItem(m_imageItem);
+		if(m_scene->loadImage(filePath)) {
 			m_view->resetTransform();
 		}
 	}

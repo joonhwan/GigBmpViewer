@@ -3,6 +3,7 @@
 #include <QGraphicsItem>
 
 class GigBmpImage;
+class QRubberBand;
 
 class QGigImageGraphicsItem : public QGraphicsItem
 {
@@ -18,5 +19,11 @@ public:
 		return m_image;
 	}
 protected:
+	// virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
+	// virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * event );
+	// virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+
 	GigBmpImage* m_image;
+	// QRubberBand * m_rubberBand;
+    // QPoint m_rubberBandOrigin;
 };
