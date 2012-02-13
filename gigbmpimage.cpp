@@ -84,9 +84,9 @@ void GigBmpImage::Close(void)
 	m_fileMapper.Close();
 }
 
-bool GigBmpImage::Draw(QPainter* painter, const QRectF& _sourceRegion, const QRectF& targetRegion)
+GigBmpImage::Data GigBmpImage::ImageData(const QRectF& _sourceRegion)
 {
-	bool done = false;
+	GigBmpImage::Data imageData;
 
 	do
 	{
@@ -125,18 +125,34 @@ bool GigBmpImage::Draw(QPainter* painter, const QRectF& _sourceRegion, const QRe
 						   stride,
 						   QImage::Format_Indexed8);
 		if(flip) {
-			QImage flippedImage = cachedImage.mirrored();
-			flippedImage.setColorTable(m_colorTable);
-			painter->drawImage(targetRegion,
-							   flippedImage,
-							   sourceRegion);
+			imageData.image = cachedImage.mirrored();
 		} else {
-			cachedImage.setColorTable(m_colorTable);
-			painter->drawImage(targetRegion,
-							   cachedImage,
-							   sourceRegion);
+			imageData.image = cachedImage;
 		}
-		done = true;
+
+		imageData.image.setColorTable(m_colorTable);
+		imageData.sourceRegion = sourceRegion;
+
+	} while(0);
+
+	return imageData;
+}
+
+
+bool GigBmpImage::Draw(QPainter* painter, const QRectF& _sourceRegion, const QRectF& targetRegion)
+{
+	bool done = false;
+
+	do
+	{
+		GigBmpImage::Data data = ImageData(_sourceRegion);
+		if(data.image.isNull()) {
+			break;
+		}
+
+		painter->drawImage(targetRegion,
+						   data.image,
+						   data.sourceRegion);
 	} while(0);
 
 	if(!done)
@@ -151,7 +167,7 @@ bool GigBmpImage::Draw(QPainter* painter, const QRectF& _sourceRegion, const QRe
 QSize GigBmpImage::Size(void) const
 {
 	QSize size(m_fileBitmapInfo.biWidth,
-			   m_fileBitmapInfo.biHeight);
+			   qAbs(m_fileBitmapInfo.biHeight));
 	return size;
 }
 
@@ -161,18 +177,13 @@ GigBmpImage::CachedItem GigBmpImage::EnsureMap(const QRect& requestedRegion)
 	CachedItem mapped;
 	do
 	{
+		bool flip = m_fileBitmapInfo.biHeight > 0;
+
 		// cache to accomdate request region
 		qint32 width = m_fileBitmapInfo.biWidth;
 		qint32 rightMostPos = width - 1;
-		qint32 height = m_fileBitmapInfo.biHeight;
+		qint32 height = qAbs(m_fileBitmapInfo.biHeight);
 		qint32 bottomMostPos = height - 1;
-
-		bool flip = height > 0;
-		if(!flip)
-		{
-			height = -1 * height;
-		}
-		Q_ASSERT(height >= 0);
 
 		// clipping TODO CHECKME
 		mapped.region.setLeft(0);
@@ -200,17 +211,16 @@ GigBmpImage::CachedItem GigBmpImage::EnsureMap(const QRect& requestedRegion)
 		}
 
 		qint32 bpp = 8;// (qint32)m_fileBitmapInfo.biBitCount;
-		qint32 stride = (width * (bpp / 8) + (sizeof(quint32)-1)) & ~(sizeof(quint32)-1);
+		MemoryFileMapper::FileSizeType stride = (width * (bpp / 8) + (sizeof(quint32)-1)) & ~(sizeof(quint32)-1);
 		MemoryFileMapper::FileSizeType offset = m_fileOffestToImageBuffer;
 		if(flip)
 		{
-			int bottom = mapped.region.bottom();
-			int endPosition = offset + height * stride;
-			offset =  (endPosition - stride) - bottom * stride;
+			MemoryFileMapper::FileSizeType endPosition = offset + height * stride;
+			offset =  (endPosition - stride) - mapped.region.bottom() * stride;
 		}
 		else
 		{
-			offset = offset + stride  * mapped.region.top();
+			offset = offset + stride  * (MemoryFileMapper::FileSizeType)mapped.region.top();
 		}
 
 		int mappedImageHeight = mapped.region.height();

@@ -370,6 +370,146 @@
 			ParseFiles="false"
 			>
 			<File
+				RelativePath=".\images\copy.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\cut.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\find.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\icon.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\new.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\open.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\paste.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\qgigimageviewer.qrc"
 				>
 				<FileConfiguration
@@ -379,7 +519,7 @@
 						Name="VCCustomBuildTool"
 						Description="Rcc&apos;ing $(InputFileName)..."
 						CommandLine="&quot;$(QTDIR)\bin\rcc.exe&quot; -name &quot;$(InputName)&quot; -no-compress &quot;$(InputPath)&quot; -o .\GeneratedFiles\qrc_$(InputName).cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
+						AdditionalDependencies="$(InputPath);.\images\icon.png;.\images\new.png;.\images\open.png;.\images\save.png;.\images\cut.png;.\images\copy.png;.\images\paste.png;.\images\find.png"
 						Outputs=".\GeneratedFiles\qrc_$(InputName).cpp"
 					/>
 				</FileConfiguration>
@@ -390,8 +530,28 @@
 						Name="VCCustomBuildTool"
 						Description="Rcc&apos;ing $(InputFileName)..."
 						CommandLine="&quot;$(QTDIR)\bin\rcc.exe&quot; -name &quot;$(InputName)&quot; -no-compress &quot;$(InputPath)&quot; -o .\GeneratedFiles\qrc_$(InputName).cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(InputPath)"
+						AdditionalDependencies="$(InputPath);.\images\icon.png;.\images\new.png;.\images\open.png;.\images\save.png;.\images\cut.png;.\images\copy.png;.\images\paste.png;.\images\find.png"
 						Outputs=".\GeneratedFiles\qrc_$(InputName).cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\images\save.png"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
 			</File>

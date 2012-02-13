@@ -6,7 +6,7 @@ QGigImageGraphicsView::QGigImageGraphicsView(QWidget *parent)
 	: QGraphicsView(parent)
 	, m_panning(0)
 {
-	setBackgroundBrush(QBrush(Qt::NoBrush));
+	setBackgroundBrush(palette().dark());
 	setRenderHint(QPainter::Antialiasing, true);
 	setCacheMode(QGraphicsView::CacheBackground);
 	setDragMode(QGraphicsView::NoDrag);

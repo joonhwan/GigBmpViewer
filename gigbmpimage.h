@@ -22,10 +22,9 @@ public:
 		QRect region;
 		QByteArray buffer;
 	};
-	struct DrawItem
+	struct Data
 	{
-		QRect sourceRegion;
-		QRect targetRegion;
+		QRectF sourceRegion;
 		QImage image;
 	};
 	GigBmpImage(QObject *parent=0);
@@ -33,6 +32,7 @@ public:
 
 	bool Open(const QString& imageFilePath);
 	void Close(void);
+	Data ImageData(const QRectF& _sourceRegion);
 	bool Draw(QPainter* painter, const QRectF& _sourceRegion, const QRectF& targetRegion);
 	QSize Size(void) const;
 private:
