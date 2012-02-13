@@ -12,7 +12,6 @@ class MyLabel : public QLabel
 public:
 	MyLabel(QWidget* widget=0)
 		: QLabel(widget)
-		, zoomLevel(1.0)
 	{
 		image = new GigBmpImage(this);
 		image->Open("c:/TestBigImage.bmp");
@@ -21,7 +20,7 @@ public:
 	{}
 	virtual QSize sizeHint(void) const
 	{
-		return image->Size() * zoomLevel;
+		return image->Size();
 	}
 	void SetScrollArea(QScrollArea* s)
 	{
@@ -58,8 +57,7 @@ protected:
 		if(rect.y()<0) {
 			rect.setY(0);
 		}
-		QRectF sourceRect(rect.topLeft()/zoomLevel,
-						 rect.size()/zoomLevel);
+		QRectF sourceRect = rect;
 		QRectF targetRect = rect;
 		image->Draw(&painter, rect, targetRect);
 

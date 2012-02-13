@@ -28,7 +28,7 @@ public:
 		QRect targetRegion;
 		QImage image;
 	};
-	GigBmpImage(QObject *parent);
+	GigBmpImage(QObject *parent=0);
 	~GigBmpImage();
 
 	bool Open(const QString& imageFilePath);
