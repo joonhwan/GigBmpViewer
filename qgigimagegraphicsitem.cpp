@@ -9,6 +9,13 @@
 #include <QRubberBand>
 #include <QGraphicsSceneMouseEvent>
 
+namespace {
+
+const qreal MIN_BLOCK_HEIGHT = 1024*10;
+
+}
+
+
 QGigImageGraphicsItem::QGigImageGraphicsItem(GigBmpImage* image)
 	: m_image(image)
 	// , m_rubberBand(0)
@@ -40,13 +47,24 @@ void QGigImageGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsI
 {
 	static int count = 0;
 	int y = option->exposedRect.top();
-	qDebug() << "index[" << count++ << "]"
-			 << "exposed rect: " << option->exposedRect
-			 << "exposed rect(scene): " << mapRectToScene(option->exposedRect)
-			 // << "transform : " << transform()
-			 << "y : " << y;
 	if(m_image) {
-		m_image->Draw(painter, option->exposedRect, option->exposedRect);
+		int drawCount = 0;
+		QRectF exposed = option->exposedRect.normalized();
+		qreal y = exposed.top();
+		QRectF imageRect = exposed;
+		while(y < exposed.bottom()) {
+			imageRect.setHeight( qMin(imageRect.height(), MIN_BLOCK_HEIGHT) );
+			m_image->Draw(painter, imageRect, imageRect);
+			y = imageRect.bottom();
+			imageRect.setRect(exposed.left(), y,
+							  exposed.width(), exposed.bottom()-y);
+			++drawCount;
+		}
+		qDebug() << "index[" << count++ << "], drawCount[" << drawCount << "] "
+				 << "exposed rect: " << option->exposedRect
+				 << "exposed rect(scene): " << mapRectToScene(option->exposedRect)
+			// << "transform : " << transform()
+				 << "y : " << y;
 	}
 }
 

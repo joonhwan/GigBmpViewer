@@ -6,6 +6,7 @@
 #include <QByteArray>
 #include <QImage>
 #include <QList>
+#include <QMutex>
 #include <QObject>
 #include <QRect>
 #include <QRgb>
@@ -33,9 +34,11 @@ public:
 	bool Open(const QString& imageFilePath);
 	void Close(void);
 	Data ImageData(const QRectF& _sourceRegion);
+	QImage Image(const QRectF& _sourceRegion);
 	bool Draw(QPainter* painter, const QRectF& _sourceRegion, const QRectF& targetRegion);
 	QSize Size(void) const;
 private:
+	mutable QMutex m_mutex;
 	BITMAPINFOHEADER m_fileBitmapInfo;
 	QVector<QRgb> m_colorTable;
 	MemoryFileMapper::FileSizeType m_fileOffestToImageBuffer;

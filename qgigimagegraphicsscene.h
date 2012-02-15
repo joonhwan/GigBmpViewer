@@ -1,7 +1,9 @@
 #ifndef QGIGIMAGEGRAPHICSSCENE_H
 #define QGIGIMAGEGRAPHICSSCENE_H
 
+#include <QFutureWatcher>
 #include <QGraphicsScene>
+#include <QImage>
 
 class QGigImageGraphicsItem;
 class QGraphicsRectItem;

@@ -3,6 +3,7 @@
 #include "gigbmpimage.h"
 #include "qgigimagegraphicsview.h"
 #include "qgigimagegraphicsscene.h"
+#include "qthreadedgigimagegraphicsscene.h"
 
 #include <QAction>
 #include <QFileDialog>
@@ -17,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 	, m_view(0)
 	, m_scene(0)
 {
-	m_scene = new QGigImageGraphicsScene;
+	m_scene = new QThreadedGigImageGraphicsScene;
 	m_view = new QGigImageGraphicsView;
 	m_view->setScene(m_scene);
 	// view->scale(4.0, 4.0);
@@ -26,6 +27,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 	createActions();
 	createMenus();
+
+	// if(m_scene->loadImage("c:/temp/RECORD_110715_174326/left/GoldenImage.bmp")) {
+	// 	m_view->resetTransform();
+	// }
 }
 
 MainWindow::~MainWindow()

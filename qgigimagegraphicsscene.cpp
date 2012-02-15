@@ -15,7 +15,6 @@ QGigImageGraphicsScene::QGigImageGraphicsScene(QObject *parent)
 
 QGigImageGraphicsScene::~QGigImageGraphicsScene()
 {
-
 }
 
 bool QGigImageGraphicsScene::loadImage(const QString& filePath)
@@ -40,6 +39,7 @@ bool QGigImageGraphicsScene::loadImage(const QString& filePath)
 		brushColor.setAlpha(100);
 		m_roi = addRect(QRectF());
 		m_roi->setBrush(brushColor);
+		m_roi->setPen(QPen());
 		done = true;
 	} else {
 		delete image;
@@ -80,7 +80,9 @@ void QGigImageGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent
 void QGigImageGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
 	if(m_rubberBand) {
-		m_roi->setRect(m_rubberBand->boundingRect());
+		if(m_roi) {
+			m_roi->setRect(m_rubberBand->boundingRect());
+		}
 		removeItem(m_rubberBand);
 		delete m_rubberBand;
 		m_rubberBand = 0;

@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QIODevice>
 #include <QPainter>
+#include <QMutexLocker>
 
 GigBmpImage::GigBmpImage(QObject *parent)
 	: QObject(parent)
@@ -28,6 +29,8 @@ bool GigBmpImage::Open(const QString& imageFilePath)
 
 	do
 	{
+		QMutexLocker lock(&m_mutex);
+
 		// check file
 		QFileInfo fileInfo(imageFilePath);
 		if(!fileInfo.exists()) {
@@ -81,7 +84,9 @@ bool GigBmpImage::Open(const QString& imageFilePath)
 
 void GigBmpImage::Close(void)
 {
+	QMutexLocker lock(&m_mutex);
 	m_fileMapper.Close();
+	qMemSet(&m_fileBitmapInfo, 0, sizeof(m_fileBitmapInfo));
 }
 
 GigBmpImage::Data GigBmpImage::ImageData(const QRectF& _sourceRegion)
@@ -90,6 +95,8 @@ GigBmpImage::Data GigBmpImage::ImageData(const QRectF& _sourceRegion)
 
 	do
 	{
+		QMutexLocker lock(&m_mutex);
+
 		QRectF sourceRegion = _sourceRegion.normalized();
 
 		// if not cached
@@ -138,6 +145,19 @@ GigBmpImage::Data GigBmpImage::ImageData(const QRectF& _sourceRegion)
 	return imageData;
 }
 
+QImage GigBmpImage::Image(const QRectF& _sourceRegion)
+{
+	Data data = ImageData(_sourceRegion);
+	Q_ASSERT(_sourceRegion.size()==data.sourceRegion.size());
+	// int x = _sourceRegion.left() - data.sourceRegion.left();
+	// int y = _sourceRegion.top() - data.sourceRegion.top();
+	// QSizeF size = _sourceRegion.size().toSize();
+	// Q_ASSERT(x >= 0 && y >= 0);
+
+	qDebug() << " source region: " << _sourceRegion << " -> " << data.sourceRegion;
+	return data.image.copy(data.sourceRegion.toRect());
+	// return data.image;
+}
 
 bool GigBmpImage::Draw(QPainter* painter, const QRectF& _sourceRegion, const QRectF& targetRegion)
 {
@@ -166,13 +186,15 @@ bool GigBmpImage::Draw(QPainter* painter, const QRectF& _sourceRegion, const QRe
 
 QSize GigBmpImage::Size(void) const
 {
+	QMutexLocker lock(&m_mutex);
+
 	QSize size(m_fileBitmapInfo.biWidth,
 			   qAbs(m_fileBitmapInfo.biHeight));
 	return size;
 }
 
 GigBmpImage::CachedItem GigBmpImage::EnsureMap(const QRect& requestedRegion)
-{
+ {
 	bool done = false;
 	CachedItem mapped;
 	do

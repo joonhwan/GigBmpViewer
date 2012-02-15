@@ -167,9 +167,9 @@ void QGigImageGraphicsView::scaleView(qreal scaleFactor)
     qreal factor = transform().scale(scaleFactor, scaleFactor).
                                         mapRect(QRectF(0, 0, 1, 1)).width();
 
-    // don't allow to scale up/down too much
-    if (factor < 0.02)
-        return;
+    // // don't allow to scale up/down too much
+    // if (factor < 0.02)
+    //     return;
 
     scale(scaleFactor, scaleFactor);
 }
