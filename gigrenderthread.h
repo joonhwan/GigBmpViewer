@@ -28,8 +28,11 @@ public:
 	bool startService(const QString& filePath);
 	void stopService(unsigned long waitTime=ULONG_MAX);
 	void reset(void);
+	void resetItemCount(int count);
 	GigBmpImage* image(void);
 signals:
+	void renderStatusChanged(const QString& status);
+	void renderProgress(int doneCount, int requestCount);
 	void renderedImage(TiledImageGraphicsItem* item, QImage scaleDown);
 	void cachedImage(TiledImageGraphicsItem* item);
 protected:
@@ -42,4 +45,6 @@ protected:
 	RenderQueue m_eventQueue;
 	mutable QMutex m_cacheLock;
 	CacheDataList m_cache;
+	int m_itemCount;
+	int m_renderedItemCount;
 };

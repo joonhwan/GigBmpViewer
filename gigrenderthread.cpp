@@ -68,14 +68,16 @@ bool GigRenderThread::startService(const QString& filePath)
 		m_image = 0;
 	}
 	m_image = new GigBmpImage;
+	emit renderStatusChanged(tr("Opening new image..."));
 	if(m_image->Open(filePath)) {
+		emit renderStatusChanged(tr("Caching..."));
 		reset();
 		start();
 	} else {
+		emit renderStatusChanged(tr("Unable to open image!"));
 		delete m_image;
 		m_image = 0;
 	}
-
 	return (m_image!=0);
 }
 
@@ -95,6 +97,13 @@ void GigRenderThread::stopService(unsigned long waitTime)
 void GigRenderThread::reset(void)
 {
 	m_eventQueue.clear();
+}
+
+void GigRenderThread::resetItemCount(int count)
+{
+	emit renderProgress(0, count);
+	m_itemCount = count;
+	m_renderedItemCount = 0;
 }
 
 GigBmpImage* GigRenderThread::image(void)
@@ -120,6 +129,7 @@ void GigRenderThread::run(void)
 					QImage image = m_image->Image(item->region());
 					qDebug() << "region[" << item->region() << "] done!";
 					emit renderedImage(item, image.scaled(scaleDownSize));
+					emit renderProgress(++m_renderedItemCount, m_itemCount);
 				}
 				break;
 			case RenderQueueItem::CACHE_RAW:

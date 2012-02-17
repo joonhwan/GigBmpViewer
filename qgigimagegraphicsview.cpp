@@ -1,6 +1,13 @@
 #include "qgigimagegraphicsview.h"
+#include "qthreadedgigimagegraphicsscene.h"
+#include "gigrenderthread.h"
 
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QWheelEvent>
+#include <QLabel>
+#include <QProgressBar>
+#include <QPropertyAnimation>
 
 QGigImageGraphicsView::QGigImageGraphicsView(QWidget *parent)
 	: QGraphicsView(parent)
@@ -13,6 +20,25 @@ QGigImageGraphicsView::QGigImageGraphicsView(QWidget *parent)
 	setOptimizationFlags(QGraphicsView::DontSavePainterState);
 	setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	setTransformationAnchor(AnchorUnderMouse);
+
+	pixelInfoLabel = new QLabel(tr(""));
+	renderStatus = new QLabel(tr(""));
+	renderProgress = new QProgressBar;
+	renderProgress->setWindowOpacity(0.0);
+
+	QVBoxLayout* leftLayout = new QVBoxLayout;
+	leftLayout->addWidget(pixelInfoLabel);
+
+	QVBoxLayout* rightLayout = new QVBoxLayout;
+	rightLayout->addStretch(1);
+	leftLayout->addWidget(renderProgress);
+	rightLayout->addWidget(renderStatus);
+
+	QHBoxLayout* layout = new QHBoxLayout;
+	layout->addLayout(leftLayout);
+	layout->addStretch(1);
+	layout->addLayout(rightLayout);
+	setLayout(layout);
 }
 
 QGigImageGraphicsView::~QGigImageGraphicsView()
@@ -20,19 +46,66 @@ QGigImageGraphicsView::~QGigImageGraphicsView()
 
 }
 
+void QGigImageGraphicsView::init(QThreadedGigImageGraphicsScene* scene)
+{
+	this->setScene(scene);
+	GigRenderThread* thread = scene->thread();
+
+	connect(thread, SIGNAL(renderStatusChanged(const QString&)),
+			renderStatus, SLOT(setText(const QString&)));
+	connect(thread, SIGNAL(renderProgress(int,int)),
+			SLOT(updateProgress(int,int)));
+}
+
 void QGigImageGraphicsView::ZoomIn()
 {
-    scaleView(qreal(1.2));
+    scaleView(qreal(2.));
 }
 
 void QGigImageGraphicsView::ZoomOut(void)
 {
-    scaleView(qreal(1 / 1.2));
+    scaleView(qreal(1./2.));
 }
 
 void QGigImageGraphicsView::ResetZoom(void)
 {
 	fitInView(scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
+}
+
+void QGigImageGraphicsView::zoom(qreal factor, QPointF centerPoint)
+{
+    scale(factor, factor);
+    centerOn(centerPoint);
+
+	qreal myZoomLevel = zoomLevel();
+	scene()->clearSelection(); // caveat in rubberband zooming.
+	// without it, one clicking will zoom scene. :(
+}
+
+qreal QGigImageGraphicsView::zoomLevel(void) const
+{
+	QRect visibleViewRect = rect();
+	QRectF visibleSceneRect = mapToScene(visibleViewRect).boundingRect();
+	qreal factor = visibleViewRect.width() / visibleSceneRect.width();
+	return factor;
+}
+
+void QGigImageGraphicsView::updateProgress(int doneCount, int totalCount)
+{
+	if(doneCount==0) {
+		renderProgress->setWindowOpacity(1.);
+	}
+
+	renderProgress->setMaximum(totalCount);
+	renderProgress->setValue(doneCount);
+
+	if(doneCount==totalCount) {
+		QPropertyAnimation* ani = new QPropertyAnimation(renderProgress, "windowOpacity");
+		ani->setDuration(1000);
+		ani->setStartValue(1.0);
+		ani->setEndValue(0.);
+		ani->start();
+	}
 }
 
 void QGigImageGraphicsView::wheelEvent ( QWheelEvent * e)
@@ -142,24 +215,6 @@ void QGigImageGraphicsView::keyReleaseEvent(QKeyEvent * event)
 		m_panning = 0;
 	}
 	__super::keyPressEvent(event);
-}
-
-void QGigImageGraphicsView::zoom(qreal factor, QPointF centerPoint)
-{
-    scale(factor, factor);
-    centerOn(centerPoint);
-
-	qreal myZoomLevel = zoomLevel();
-	scene()->clearSelection(); // caveat in rubberband zooming.
-	// without it, one clicking will zoom scene. :(
-}
-
-qreal QGigImageGraphicsView::zoomLevel(void) const
-{
-	QRect visibleViewRect = rect();
-	QRectF visibleSceneRect = mapToScene(visibleViewRect).boundingRect();
-	qreal factor = visibleViewRect.width() / visibleSceneRect.width();
-	return factor;
 }
 
 void QGigImageGraphicsView::scaleView(qreal scaleFactor)

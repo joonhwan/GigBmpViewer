@@ -71,6 +71,7 @@ bool QThreadedGigImageGraphicsScene::loadImage(const QString& filePath)
 		QSize imageSize = m_thread->image()->Size();
 		int itemWidth = imageSize.width();///16;
 		int itemHeight = 1024;//128*4;
+		QList<TiledImageGraphicsItem*> itemsCreated;
 		for(int x=0; x<imageSize.width(); x+=itemWidth) {
 			for(int y=0; y<imageSize.height(); y+=itemHeight) {
 				QRectF region(x,y,
@@ -79,7 +80,14 @@ bool QThreadedGigImageGraphicsScene::loadImage(const QString& filePath)
 				item->setIndex(index);
 				item->setBrush(brush[index%2]); ++index;
 				addItem(item);
+
+				itemsCreated << item;
 			}
+		}
+
+		m_thread->resetItemCount(itemsCreated.size());
+		foreach(TiledImageGraphicsItem* item, itemsCreated) {
+			m_thread->render(item);
 		}
 
 		QColor brushColor = Qt::yellow;

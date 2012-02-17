@@ -20,8 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	m_scene = new QThreadedGigImageGraphicsScene;
 	m_view = new QGigImageGraphicsView;
-	m_view->setScene(m_scene);
-	// view->scale(4.0, 4.0);
+	m_view->init(m_scene);
 
 	setCentralWidget(m_view);
 
