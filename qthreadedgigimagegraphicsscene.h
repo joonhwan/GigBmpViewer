@@ -31,6 +31,8 @@ public:
 	{
 		return m_thread;
 	}
+Q_SIGNALS:
+	void colorDetected(int x, int y, QColor color);
 public Q_SLOTS:
 	void updateCachedImage(TiledImageGraphicsItem* item, QImage pixmap);
 	void updateCachedImage(TiledImageGraphicsItem* item);

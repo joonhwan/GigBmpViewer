@@ -2,7 +2,9 @@
 #include "gigbmpimage.h"
 #include "tiledimagegraphicsitem.h"
 
+#include <QBuffer>
 #include <QDebug>
+#include <QTextStream>
 #include <limits.h>
 
 namespace {
@@ -45,13 +47,18 @@ QImage GigRenderThread::cachedRawImageOf(TiledImageGraphicsItem* item)
 		}
 	}
 
-	qDebug() << "search cache out of " << m_cache.size() << " -- > null ? :" << image.isNull();
+	// qDebug() << "search cache out of " << m_cache.size() << " -- > null ? :" << image.isNull();
 
 	return image;
 }
 
 void GigRenderThread::cacheRawImage(TiledImageGraphicsItem* item)
 {
+	QRect r = item->region().toRect();
+	QString log = QString(tr("caching image area[(x:%1,y:%2)-(w:%3,h:%4)]")).
+				  arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
+	emit renderStatusChanged(log);
+
 	int recachePriority = 10000;
 	RenderQueueItem queueItem;
 	queueItem.code = RenderQueueItem::CACHE_RAW;
@@ -68,13 +75,12 @@ bool GigRenderThread::startService(const QString& filePath)
 		m_image = 0;
 	}
 	m_image = new GigBmpImage;
-	emit renderStatusChanged(tr("Opening new image..."));
+	emit renderStatusChanged(tr("starting image loading..."));
 	if(m_image->Open(filePath)) {
-		emit renderStatusChanged(tr("Caching..."));
 		reset();
 		start();
 	} else {
-		emit renderStatusChanged(tr("Unable to open image!"));
+		emit renderStatusChanged(tr("unable to open image!"));
 		delete m_image;
 		m_image = 0;
 	}
@@ -127,7 +133,7 @@ void GigRenderThread::run(void)
 					QSize scaleDownSize = item->boundingRect().size().toSize();
 					scaleDownSize/=scaleDownRatio;
 					QImage image = m_image->Image(item->region());
-					qDebug() << "region[" << item->region() << "] done!";
+					// qDebug() << "region[" << item->region() << "] done!";
 					emit renderedImage(item, image.scaled(scaleDownSize));
 					emit renderProgress(++m_renderedItemCount, m_itemCount);
 				}
@@ -137,7 +143,7 @@ void GigRenderThread::run(void)
 					QSize scaleDownSize = item->boundingRect().size().toSize();
 					scaleDownSize/=scaleDownRatio;
 					QImage image = m_image->Image(item->region());
-					qDebug() << "region[" << item->region() << "] done!";
+					// qDebug() << "region[" << item->region() << "] done!";
 					addCache(item, image);
 				}
 				break;
@@ -154,7 +160,7 @@ void GigRenderThread::addCache(TiledImageGraphicsItem* item, QImage image)
 	QMutexLocker locker(&m_cacheLock);
 
 	if(m_cache.size() > MAX_CACHE_COUNT) {
-		qDebug() << "remove a cache data";
+		// qDebug() << "remove a cache data";
 		m_cache.takeFirst();
 	}
 	CacheData data;
@@ -163,6 +169,6 @@ void GigRenderThread::addCache(TiledImageGraphicsItem* item, QImage image)
 	m_cache.push_back(data);
 	emit cachedImage(item);
 
-	qDebug() << "new cache is added. count : " << m_cache.size();
+	// qDebug() << "new cache is added. count : " << m_cache.size();
 }
 

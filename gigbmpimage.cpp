@@ -154,7 +154,7 @@ QImage GigBmpImage::Image(const QRectF& _sourceRegion)
 	// QSizeF size = _sourceRegion.size().toSize();
 	// Q_ASSERT(x >= 0 && y >= 0);
 
-	qDebug() << " source region: " << _sourceRegion << " -> " << data.sourceRegion;
+	// qDebug() << " source region: " << _sourceRegion << " -> " << data.sourceRegion;
 	return data.image.copy(data.sourceRegion.toRect());
 	// return data.image;
 }
@@ -225,7 +225,7 @@ GigBmpImage::CachedItem GigBmpImage::EnsureMap(const QRect& requestedRegion)
 		if(!m_cachedData.empty()) {
 			const CachedItem& cached = m_cachedData.first();
 			if(cached.region.contains(requestedRegion)) {
-				qDebug() << "cache hits!";
+				// qDebug() << "cache hits!";
 				mapped = cached;
 				done = true;
 				break;
@@ -262,7 +262,7 @@ GigBmpImage::CachedItem GigBmpImage::EnsureMap(const QRect& requestedRegion)
 		m_cachedData.clear();
 		m_cachedData.push_back(mapped);
 
-		qDebug() << "newly cached!";
+		// qDebug() << "newly cached!";
 
 	} while(0);
 

@@ -16,6 +16,8 @@ public:
 	~QGigImageGraphicsScene();
 
 	bool loadImage(const QString& filePath);
+Q_SIGNALS:
+	void colorDetected(int x, int y, QColor color);
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);

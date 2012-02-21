@@ -122,6 +122,17 @@ void QThreadedGigImageGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *m
 //virtual
 void QThreadedGigImageGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+	QPointF currPosF = mouseEvent->scenePos() + QPointF(-0.5, -0.5);
+	// qDebug() << "currPos:" << currPosF;
+
+	QList<QGraphicsItem*> itemsOver = items(currPosF);
+	foreach(QGraphicsItem* item, itemsOver) {
+		if(TiledImageGraphicsItem* tile=qgraphicsitem_cast<TiledImageGraphicsItem*>(item)) {
+			QColor color = tile->colorAt(currPosF);
+			QPoint p = currPosF.toPoint();
+			emit colorDetected(p.x(), p.y(), color);
+		}
+	}
 	if(m_rubberBand) {
 		QRectF movingRect = QRectF(m_rubberBandOrigin,
 								   mouseEvent->scenePos()).normalized();

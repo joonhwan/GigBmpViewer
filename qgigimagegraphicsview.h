@@ -3,9 +3,10 @@
 
 #include <QGraphicsView>
 
+class DecoratedSimpleLabel;
 class QLabel;
-class QProgressBar;
 class QThreadedGigImageGraphicsScene;
+class TransparentProgressBar;
 
 class QGigImageGraphicsView : public QGraphicsView
 {
@@ -23,18 +24,20 @@ public:
 	qreal zoomLevel(void) const;
 protected slots:
 	void updateProgress(int doneCount, int totalCount);
+	void updatePixelInfo(int x, int y, QColor color);
 protected:
 	virtual void wheelEvent ( QWheelEvent * e);
-	virtual void mousePressEvent(QMouseEvent* event);
-	virtual void mouseReleaseEvent(QMouseEvent *event);
+	virtual void mousePressEvent(QMouseEvent* e);
+	virtual void mouseReleaseEvent(QMouseEvent *e);
+	virtual void mouseMoveEvent(QMouseEvent* e);
 	virtual void keyPressEvent(QKeyEvent* event);
 	virtual void keyReleaseEvent(QKeyEvent * event);
 	void scaleView(qreal scaleFactor);
 
 	int m_panning;
-	QLabel* pixelInfoLabel;
-	QProgressBar* renderProgress;
-	QLabel* renderStatus;
+	DecoratedSimpleLabel* pixelInfoLabel;
+	TransparentProgressBar* renderProgress;
+	DecoratedSimpleLabel* renderStatus;
 };
 
 #endif // QGIGIMAGEGRAPHICSVIEW_H

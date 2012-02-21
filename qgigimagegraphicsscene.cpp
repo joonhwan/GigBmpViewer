@@ -1,6 +1,7 @@
 #include "qgigimagegraphicsscene.h"
 #include "qgigimagegraphicsitem.h"
 #include "gigbmpimage.h"
+#include "tiledimagegraphicsitem.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsRectItem>
@@ -72,6 +73,15 @@ void QGigImageGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent
 		QRectF movingRect = QRectF(m_rubberBandOrigin,
 								   mouseEvent->scenePos()).normalized();
 		m_rubberBand->setRect(sceneRect().intersected(movingRect));
+	}
+	QPointF posF = mouseEvent->pos();
+	QList<QGraphicsItem*> itemsOver = items(posF);
+	foreach(QGraphicsItem* item, itemsOver) {
+		if(TiledImageGraphicsItem* tile=qgraphicsitem_cast<TiledImageGraphicsItem*>(item)) {
+			QColor color = tile->colorAt(posF);
+			QPoint pos = posF.toPoint();
+			emit colorDetected(pos.x(), pos.y(), color);
+		}
 	}
 	__super::mouseMoveEvent(mouseEvent);
 }

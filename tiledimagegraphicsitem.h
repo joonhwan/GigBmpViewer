@@ -35,10 +35,12 @@ public:
 	{
 		return m_thumbnailed;
 	}
+	QColor colorAt(QPointF scenePos);
 protected:
 	bool m_thumbnailed;
 	int m_index;
 	QBrush m_brush;
 	QRectF m_region;
 	QPixmap m_scaledImage;
+	QImage m_scaledImageI;
 };

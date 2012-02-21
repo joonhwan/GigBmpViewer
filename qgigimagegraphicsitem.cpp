@@ -60,11 +60,11 @@ void QGigImageGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsI
 							  exposed.width(), exposed.bottom()-y);
 			++drawCount;
 		}
-		qDebug() << "index[" << count++ << "], drawCount[" << drawCount << "] "
-				 << "exposed rect: " << option->exposedRect
-				 << "exposed rect(scene): " << mapRectToScene(option->exposedRect)
-			// << "transform : " << transform()
-				 << "y : " << y;
+		// qDebug() << "index[" << count++ << "], drawCount[" << drawCount << "] "
+		// 		 << "exposed rect: " << option->exposedRect
+		// 		 << "exposed rect(scene): " << mapRectToScene(option->exposedRect)
+		// 	// << "transform : " << transform()
+		// 		 << "y : " << y;
 	}
 }
 
